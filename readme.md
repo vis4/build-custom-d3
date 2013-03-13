@@ -2,7 +2,17 @@
 
 You've been there before: sometimes the world really sucks and you just cannot use [D3](http://d3js.org) for your awesome visualization because of backward compatiblity bla bla. So you go with [Raphael](http://raphaeljs.com) or whatever you prefer. But wouldn't it be nice to use just some parts of D3, say, the treemap layout or a color scale?
 
-Editing the D3 Makefile is fun, but it takes a while to figure out all the inter-dependencies. This is where this handy little script comes in. It takes your order, parses the d3 dependency tree and serves you the custom build within a second.
+**Update:** With [D3 3.1.0](https://github.com/mbostock/d3/tree/3.1.0) there is a simpler way to create custom d3 builds using the amazing [SMASH](https://github.com/mbostock/smash)™:
+
+```bash
+❯ cd d3/
+❯ cat src/start.js > d3.treemap.js
+❯ smash src/layout/treemap.js >> d3.treemap.js
+❯ cat src/end.js >> d3.treemap.js
+```
+
+## Deprecated readme below:
+
 
 ```bash
 ❯ git clone git://github.com/gka/build-custom-d3
@@ -63,6 +73,4 @@ Also, here's a handy one-liner for testing the script:
   lab: [Function] }
 ```
 
-## What's next?
 
-Most probably bug fixing.. :)
