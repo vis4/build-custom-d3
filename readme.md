@@ -4,43 +4,64 @@ You've been there before: sometimes the world really sucks and you just cannot u
 
 Editing the D3 Makefile is fun, but it takes a while to figure out all the inter-dependencies. This is where this handy little script comes in. It takes your order, parses the d3 dependency tree and serves you the custom build within a second.
 
-     ❯ git clone git://github.com/gka/build-custom-d3
-     ❯ cd build-custom-d3/
-     ❯ git clone git://github.com/mbostock/d3.git
-     ❯ python build.py d3.layout.treemap > d3.treemap.js
+```bash
+ ❯ git clone git://github.com/gka/build-custom-d3
+ ❯ cd build-custom-d3/
+ ❯ git clone git://github.com/mbostock/d3.git
+ ❯ python build.py d3.layout.treemap > d3.treemap.js
+```
 
 Et voilà, there's your custom ``d3.treemap.js``, and it's only 1.7K after minifying and gzipping:
 
-     ❯ uglifyjs -m -c -o d3.treemap.min.js d3.treemap.js
-     ❯ gzip d3.treemap.min.js
-     ❯ ls -lh d3.treemap*
-    -rw-r--r--  1 you  staff    10K 13 Mar 00:52 d3.treemap.js
-    -rw-r--r--  1 you  staff   3.9K 13 Mar 00:52 d3.treemap.min.js
-    -rw-r--r--  1 you  staff   1.7K 13 Mar 00:54 d3.treemap.min.js.gz
+```bash
+ ❯ uglifyjs -m -c -o d3.treemap.min.js d3.treemap.js
+ ❯ gzip d3.treemap.min.js
+ ❯ ls -lh d3.treemap*
+-rw-r--r--  1 you  staff    10K 13 Mar 00:52 d3.treemap.js
+-rw-r--r--  1 you  staff   3.9K 13 Mar 00:52 d3.treemap.min.js
+-rw-r--r--  1 you  staff   1.7K 13 Mar 00:54 d3.treemap.min.js.gz
+```
 
 Now let's go and compute a layout in node.js:
 
-     ❯ node
-    > require('./d3.treemap')
-    {}
-    > tree = { children: [{ value: 10 }, { value: 20 }] }
-    { children: [ { value: 10 }, { value: 20 } ] }
-    > d3.layout.treemap().size([200,200])(tree)
-    [ { children: [ [Object], [Object] ],
-        depth: 0, value: 30, x: 0, y: 0, dx: 200, dy: 200, area: 40000
-      },
-      { value: 10, depth: 1, area: 13333, x: 0, y: 0, dy: 200, dx: 67 },
-      { value: 20, depth: 1, area: 26666, x: 67, y: 0, dy: 200, dx: 133, z: true }
-    ]
+```bash
+❯ node
+> require('./d3.treemap')
+{}
+> tree = { children: [{ value: 10 }, { value: 20 }] }
+{ children: [ { value: 10 }, { value: 20 } ] }
+> d3.layout.treemap().size([200,200])(tree)
+[ { children: [ [Object], [Object] ],
+    depth: 0, value: 30, x: 0, y: 0, dx: 200, dy: 200, area: 40000
+  },
+  { value: 10, depth: 1, area: 13333, x: 0, y: 0, dy: 200, dx: 67 },
+  { value: 20, depth: 1, area: 26666, x: 67, y: 0, dy: 200, dx: 133, z: true }
+]
+```
 
 You can build several "modules" at once, too:
 
-     ❯ python build.py d3.layout.treemap d3.layout.pie > d3.build.js
+```bash
+ ❯ python build.py d3.layout.treemap d3.layout.pie > d3.build.js
+```
 
 If D3 already lives somewhere else on your computer, you can set the D3_PATH environment var:
 
-     ❯ export D3_PATH=/path/to/my/d3
+```bash
+ ❯ export D3_PATH=/path/to/my/d3
+```
 
+Also, here's a handy one-liner for testing the script:
+
+```bash
+ ❯ python build.py d3.lab | node -p
+{ version: '3.0.8',
+  hsl: [Function],
+  map: [Function],
+  hcl: [Function],
+  rgb: [Function],
+  lab: [Function] }
+```
 
 ## What's next?
 

@@ -4,26 +4,34 @@ import re
 import sys
 from os.path import exists
 import os
+import json
 
 if 'D3_PATH' in os.environ:
     D3_PATH = os.environ['D3_PATH']
 else:
     D3_PATH = './d3/'
 
+
+def error(msg):
+    sys.stderr.write('ERROR: '+msg+'\n')
+    sys.exit(-1)
+
+
+# read d3 version from package.json
+if not exists(D3_PATH + 'package.json'):
+    error('could not find D3 in %s' % D3_PATH)
+
+version = json.loads(open(D3_PATH + 'package.json').read())['version']
+
 MOD_START = [
     'polyfills.js',
     D3_PATH + 'src/start.js',
-    'core.module.js'
+    'CORE'
 ]
 
 MOD_END = [
     D3_PATH + 'src/end.js'
 ]
-
-
-def error(msg):
-    sys.stderr.write('ERROR: '+msg+'\n')
-    sys.exit(-1)
 
 
 def main():
@@ -50,7 +58,7 @@ def main():
             if req != 'd3' and req not in visited:
                 if req in deps:
                     deps = filter(lambda k: k != req, deps)
-                deps.append(req) # add to required packages
+                deps.append(req)  # add to required packages
         i += 1
     # remove double dependencies
     deps.reverse()
@@ -78,12 +86,16 @@ def main():
         if not found:
             error('not found: ' + m)
     files += MOD_END
-    out = ""
+    out = u''
     for f in files:
+        if f == 'CORE':
+            out += 'var d3 = d3 || { version: "%s"};\n' % version
+            continue
         fo = open(f, 'r')
-        out += fo.read()
+        c = fo.read()
+        out += c.decode('utf-8')
         fo.close()
-    print out
+    print out.encode('utf-8')
 
 
 def parse_dependencies():
@@ -184,8 +196,8 @@ def parse_dependencies():
                 if m1 != m:
                     if func in modules[m1]['defines'] and m1 not in mod['depends'] and m1 != m:
                         mod['depends'].append(m1)
-    import json
-    open('deps.json', 'w').write(json.dumps(modules, indent=2, separators=(',', ':')))
+    # for debugging the dependency tree:
+    # open('deps.json', 'w').write(json.dumps(modules, indent=2, separators=(',', ':')))
     return modules
 
 
