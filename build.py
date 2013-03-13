@@ -32,6 +32,7 @@ def main():
         error("you need to specify what you want, e.g. 'd3.layout.treemap'")
 
     modules = parse_dependencies()
+    visited = []
     deps = []
     for m in targets:
         if m in modules:
@@ -42,20 +43,20 @@ def main():
     i = 0
     while i < len(deps):
         m = deps[i]
+        visited.append(m)
+        #if m == 'd3.rgb':
+        #    sys.stderr.write(', '.join(deps)+'\n\n')
         for req in modules[m]['depends']:
-            if req != 'd3':
+            if req != 'd3' and req not in visited:
                 if req in deps:
-                    i += 1
-                deps.append(req)  # add to required packages
+                    deps = filter(lambda k: k != req, deps)
+                deps.append(req) # add to required packages
         i += 1
     # remove double dependencies
-    deps_ = []
     deps.reverse()
-    for m in deps:
-        if m not in deps_:
-            deps_.append(m)
+
     files = MOD_START
-    for m in deps_:
+    for m in deps:
         m = m.split('.')[1:]
         chk = []
         if len(m) == 1:
@@ -88,7 +89,7 @@ def main():
 def parse_dependencies():
     d3_mod = re.compile('(d3(?:\.[a-zA-Z]+)+)')
     d3_func_def = re.compile('function +(d3(?:_[a-zA-Z]+)+)')
-    d3_func_call = re.compile('(?!function +)(d3(?:_[a-zA-Z]+)+) *\(')
+    d3_func_call = re.compile('(?!function +)(d3(?:_[a-zA-Z]+)+)')
 
     modules = {}
 
@@ -146,7 +147,7 @@ def parse_dependencies():
 
         # at least a module is dependend on its own namespace
         parts = cl.split('.')
-        if len(parts) > 1:
+        if len(parts) > 2:
             module['depends'].append('.'.join(parts[:-1]))
 
         for mod in d3_mod.findall(src):
@@ -174,15 +175,17 @@ def parse_dependencies():
             if need not in modules:
                 #print 'missing', need
                 continue
-            if need not in mod['depends']:
+            if need not in mod['depends'] and need != m and need != 'd3':
                 mod['depends'].append(need)
 
         for func in mod['calls']:
             # find mod who provides func
             for m1 in modules:
                 if m1 != m:
-                    if func in modules[m1]['defines'] and m1 not in mod['depends']:
+                    if func in modules[m1]['defines'] and m1 not in mod['depends'] and m1 != m:
                         mod['depends'].append(m1)
+    import json
+    open('deps.json', 'w').write(json.dumps(modules, indent=2, separators=(',', ':')))
     return modules
 
 
