@@ -44,6 +44,8 @@ def main():
         m = deps[i]
         for req in modules[m]['depends']:
             if req != 'd3':
+                if req in deps:
+                    i += 1
                 deps.append(req)  # add to required packages
         i += 1
     # remove double dependencies
