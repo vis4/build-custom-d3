@@ -11,9 +11,7 @@ create custom d3 builds using the amazing [SMASH](https://github.com/mbostock/sm
 ```bash
 ❯ npm install smash
 ❯ cd d3/
-❯ cat src/start.js > d3.treemap.js
-❯ smash src/layout/treemap.js >> d3.treemap.js
-❯ cat src/end.js >> d3.treemap.js
+❯ smash src/start.js src/layout/treemap.js src/end.js > d3.treemap.js
 ```
 
 I keep the old readme below, if you're interested.
