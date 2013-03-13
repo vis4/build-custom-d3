@@ -1,17 +1,24 @@
 # Build your custom D3
 
-You've been there before: sometimes the world really sucks and you just cannot use [D3](http://d3js.org) for your awesome visualization because of backward compatiblity bla bla. So you go with [Raphael](http://raphaeljs.com) or whatever you prefer. But wouldn't it be nice to use just some parts of D3, say, the treemap layout or a color scale?
+You've been there before: sometimes the world really sucks and you just cannot use [D3](http://d3js.org)
+for your awesome visualization because of backward compatiblity bla bla. So you go with
+[Raphael](http://raphaeljs.com) or whatever you prefer. But wouldn't it be nice to use
+just some parts of D3, say, the treemap layout or a color scale?
 
-**Update:** With [D3 3.1.0](https://github.com/mbostock/d3/tree/3.1.0) there is a simpler way to create custom d3 builds using the amazing [SMASH](https://github.com/mbostock/smash)™:
+**Update:** With [D3 3.1.0](https://github.com/mbostock/d3/tree/3.1.0) there is a simpler way to
+create custom d3 builds using the amazing [SMASH](https://github.com/mbostock/smash)™:
 
 ```bash
+❯ npm install smash
 ❯ cd d3/
 ❯ cat src/start.js > d3.treemap.js
 ❯ smash src/layout/treemap.js >> d3.treemap.js
 ❯ cat src/end.js >> d3.treemap.js
 ```
 
-## Deprecated readme below:
+I keep the old readme below, if you're interested.
+
+### Deprecated readme:
 
 
 ```bash
